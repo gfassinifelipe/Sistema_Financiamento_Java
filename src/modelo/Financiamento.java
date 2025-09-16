@@ -1,61 +1,60 @@
 package modelo;
 
 public class Financiamento {
-	private String tipoPropriedade;
-	private double valorImovel;
-	private int prazoFinanciamentoMeses;
-	private double taxaJurosAnual;
+    private String tipoPropriedade;
+    private double valorImovel;
+    private int prazoFinanciamentoMeses;
+    private double taxaJurosAnual;
 
-	public Financiamento(String tipoPropriedade, double valorImovel, int prazoFinanciamentoMeses, double taxaJurosAnual) {
-		
-		this.tipoPropriedade = tipoPropriedade;
-		this.valorImovel = valorImovel;
-		this.prazoFinanciamentoMeses = prazoFinanciamentoMeses;
-		this.taxaJurosAnual = taxaJurosAnual;
- }
+    public Financiamento(String tipoPropriedade, double valorImovel, int prazoFinanciamentoMeses, double taxaJurosAnual) {
+        this.tipoPropriedade = tipoPropriedade;
+        this.valorImovel = valorImovel;
+        this.prazoFinanciamentoMeses = prazoFinanciamentoMeses;
+        this.taxaJurosAnual = taxaJurosAnual;
+    }
 
-	public String getTipoPropriedade() {
-		return tipoPropriedade;
-	}
+    public String getTipoPropriedade() {
+        return tipoPropriedade;
+    }
 
+    public double getValorImovel() {
+        return valorImovel;
+    }
 
-	public double getValorImovel() {
-		return valorImovel;
-	}
+    public int getPrazoFinanciamentoMeses() { 
+        return prazoFinanciamentoMeses;
+    }
 
-	public int getPrazoFinanciamentoMeses() { 
-		return prazoFinanciamentoMeses;
-	}
+    public double getTaxaJurosAnual() {
+        return taxaJurosAnual;
+    }
+    
+    public double calcularPagamentoMensal() {
+        double taxaMensal = (this.taxaJurosAnual / 100) / 12;
+        int prazo = this.prazoFinanciamentoMeses;
+        
+        double pagamentoMensal = this.valorImovel * (taxaMensal * Math.pow(1 + taxaMensal, prazo)) / (Math.pow(1 + taxaMensal, prazo) - 1);
+        return pagamentoMensal;
+    }
 
-	public double getTaxaJurosAnual() {
-		return taxaJurosAnual;
-	}
-	
-	public int[] prazoAnos() {
-		int anos = prazoFinanciamentoMeses / 12;
-		int meses = prazoFinanciamentoMeses % 12;
-		return new int[]{anos, meses};
-	}
-		
-	public double calcularPagamentoMensal() {
-		int meses = prazoFinanciamentoMeses * 12;
-		double taxaMensalDecimal = (taxaJurosAnual / 100.0) / 12.0;
-		return (valorImovel / meses) * (1 + taxaMensalDecimal);
-	}
+    public double calcularTotalPagamento() {
+        return calcularPagamentoMensal() * this.prazoFinanciamentoMeses;
+    }
 
-	public double calcularTotalPagamento() {
-		return calcularPagamentoMensal() * (prazoFinanciamentoMeses * 12);
-	}
+    public void mostrarResumo() {
+        System.out.printf("Tipo da propriedade: %s\n", this.tipoPropriedade);
+        System.out.printf("Valor do imóvel: R$ %.2f\n", this.valorImovel);
 
-	public void mostrarResumo() {
-		int[] prazo = prazoAnos();
-		System.out.println("--- Resumo do Financiamento ---");
-		System.out.printf("Sua propriedade é uma %s\n", tipoPropriedade);
-		System.out.printf("Valor do imóvel: R$ %.2f\n", valorImovel);
-		System.out.printf("Prazo: %d Anos e %d meses\n", prazo[0], prazo[1]);
-		System.out.printf("Taxa anual (%%): %.4f\n", taxaJurosAnual);
-		System.out.printf("Parcela mensal estimada: R$ %.2f\n", calcularPagamentoMensal());
-		System.out.printf("Total pago no final: R$ %.2f\n", calcularTotalPagamento());
-		System.out.println("-------------------------------");
- }
+        if (this.prazoFinanciamentoMeses < 12) {
+            System.out.printf("Prazo: %d meses\n", this.prazoFinanciamentoMeses);
+        } else {
+            int anos = this.prazoFinanciamentoMeses / 12;
+            int meses = this.prazoFinanciamentoMeses % 12;
+            System.out.printf("Prazo: %d anos e %d meses\n", anos, meses);
+        }
+
+        System.out.printf("Taxa de juros anual: %.2f%%\n", this.taxaJurosAnual);
+        System.out.printf("Total a ser pago: R$ %.2f\n", this.calcularTotalPagamento());
+        System.out.printf("Valor da parcela mensal: R$ %.2f\n", this.calcularPagamentoMensal());
+    }
 }
